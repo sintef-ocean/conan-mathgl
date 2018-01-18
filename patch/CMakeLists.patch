@@ -1,0 +1,42 @@
+--- CMakeLists.txt	2017-07-20 08:27:40.000000000 +0200
++++ New_CMakeLists.txt	2018-01-18 23:42:24.888594000 +0100
+@@ -1,9 +1,13 @@
+-cmake_minimum_required(VERSION 2.8.12)
+-if(POLICY CMP0043)
+-    cmake_policy(SET CMP0043 OLD)
+-endif()
+-
+-project( MathGL2 )
++cmake_minimum_required(VERSION 3.1.2)
++#if(POLICY CMP0043)
++#    cmake_policy(SET CMP0043 OLD)
++#endif()
++
++project( MathGL2 C CXX)
++include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
++conan_basic_setup()
++set(CMAKE_CXX_STANDARD 11)
++set(CMAKE_POSITION_INDEPENDENT_CODE:BOOL ON)
+ 
+ set(mgl_clean_files )
+ set(MGL_DEP_LIBS)
+@@ -503,16 +507,9 @@
+ 	if(NOT MGL_HAVE_PNG)
+ 		message(SEND_ERROR "You have to enable PNG if you plan to use PDF export.")
+ 	endif(NOT MGL_HAVE_PNG)
+-	find_library(HPDF_LIB hpdf)
+-	if(NOT HPDF_LIB)
+-		message(SEND_ERROR "Couldn't find libHaru or libhpdf.")
+-	endif(NOT HPDF_LIB)
+-	find_path(HPDF_INCLUDE_DIR hpdf_u3d.h)
+-	if(NOT HPDF_INCLUDE_DIR)
+-		message(SEND_ERROR "Couldn't find headers of 3d-enabled version of libhpdf.")
+-	endif(NOT HPDF_INCLUDE_DIR)
+-	include_directories(${HPDF_INCLUDE_DIR})
+-	set(MGL_DEP_LIBS ${HPDF_LIB} ${MGL_DEP_LIBS})
++	find_package(Libharu REQUIRED)
++	include_directories(${LIBHARU_INCLUDE_DIR})
++	set(MGL_DEP_LIBS ${LIBHARU_LIBRARIES} ${MGL_DEP_LIBS})
+ else(enable-pdf)
+ 	set(MGL_HAVE_PDF 0)
+ endif(enable-pdf)
