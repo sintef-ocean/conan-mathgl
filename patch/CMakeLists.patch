@@ -1,17 +1,13 @@
---- CMakeLists.txt	2017-07-20 08:27:40.000000000 +0200
-+++ New_CMakeLists.txt	2018-01-18 23:42:24.888594000 +0100
-@@ -1,9 +1,13 @@
+--- CMakeLists.txt	2017-12-12 15:10:05.121588000 +0100
++++ New_CMakeLists.txt	2018-01-19 14:16:19.467058100 +0100
+@@ -1,21 +1,25 @@
 -cmake_minimum_required(VERSION 2.8.12)
--if(POLICY CMP0043)
--    cmake_policy(SET CMP0043 OLD)
--endif()
--
--project( MathGL2 )
 +cmake_minimum_required(VERSION 3.1.2)
-+#if(POLICY CMP0043)
-+#    cmake_policy(SET CMP0043 OLD)
-+#endif()
-+
+ if(POLICY CMP0043)
+     cmake_policy(SET CMP0043 OLD)
+ endif()
+ 
+-project( MathGL2 )
 +project( MathGL2 C CXX)
 +include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 +conan_basic_setup()
@@ -20,7 +16,21 @@
  
  set(mgl_clean_files )
  set(MGL_DEP_LIBS)
-@@ -503,16 +507,9 @@
+ add_definitions(-DMGL_SRC)
+-set(CMAKE_MODULE_PATH ${MathGL2_SOURCE_DIR}/scripts)
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${MathGL2_SOURCE_DIR}/scripts)
+ 
+ if(NOT CMAKE_BUILD_TYPE)
+ 	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are:
+ 		None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel." FORCE)
+ endif(NOT CMAKE_BUILD_TYPE)
+ 
+-set(CMAKE_VERBOSE_MAKEFILE ON)
++set(CMAKE_VERBOSE_MAKEFILE OFF)
+ set(MathGL_VERSION_MAJOR 2)
+ set(MathGL_VERSION_MINOR 4)
+ set(MathGL_PATCH_VERSION 2)
+@@ -520,16 +524,11 @@
  	if(NOT MGL_HAVE_PNG)
  		message(SEND_ERROR "You have to enable PNG if you plan to use PDF export.")
  	endif(NOT MGL_HAVE_PNG)
@@ -32,11 +42,11 @@
 -	if(NOT HPDF_INCLUDE_DIR)
 -		message(SEND_ERROR "Couldn't find headers of 3d-enabled version of libhpdf.")
 -	endif(NOT HPDF_INCLUDE_DIR)
--	include_directories(${HPDF_INCLUDE_DIR})
--	set(MGL_DEP_LIBS ${HPDF_LIB} ${MGL_DEP_LIBS})
-+	find_package(Libharu REQUIRED)
-+	include_directories(${LIBHARU_INCLUDE_DIR})
-+	set(MGL_DEP_LIBS ${LIBHARU_LIBRARIES} ${MGL_DEP_LIBS})
+ 	include_directories(${HPDF_INCLUDE_DIR})
+ 	set(MGL_DEP_LIBS ${HPDF_LIB} ${MGL_DEP_LIBS})
++  find_package(Libharu REQUIRED)
++  include_directories(${LIBHARU_INCLUDE_DIR})
++  set(MGL_DEP_LIBS ${LIBHARU_LIBRARIES} ${MGL_DEP_LIBS})
  else(enable-pdf)
  	set(MGL_HAVE_PDF 0)
  endif(enable-pdf)

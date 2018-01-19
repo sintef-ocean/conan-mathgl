@@ -1,10 +1,10 @@
 from conans import ConanFile, CMake, tools
-
+import svn.remote
 
 class MathglConan(ConanFile):
     name = "mathgl"
-    version = "2.4.1"
-    license = "LGPL-3 | GPL-3"
+    version = "2.4.2"
+    license = "LGPL-3.0-only | GPL-3.0-only"
     url = "https://github.com/joakimono/conan-mathgl"
     author = "Joakim Haugen (joakim.haugen@gmail.com)"
     homepage ="http://mathgl.sourceforge.net"
@@ -41,7 +41,7 @@ class MathglConan(ConanFile):
                        "double_precision=True",
                        "rvalue_support=True",            
                        "pthread=False",
-                       "pthr_widget=True",
+                       "pthr_widget=False",
                        "openmp=True",
                        "opengl=True",
                        "glut=False",
@@ -91,8 +91,6 @@ class MathglConan(ConanFile):
             self.add_cmake_opt("hdf5", self.options.hdf5)
             self.add_cmake_opt("all-swig", self.options.all_swig)
 
-
-
         # expected to be found w/o conan: opengl, glut, fltk, mpi, ltdl, gsl
         if self.options.wxWidgets:
             self.requires("wxWidgets/[>3.0.3]@cjwddtc/stable") # shared linking?"
@@ -107,11 +105,12 @@ class MathglConan(ConanFile):
         if self.options.jpeg:
             self.requires("libjpeg-turbo/[>=1.5.2]@bincrafters/stable", private=True)
             self.options["libjpeg-turbo"].shared = False
+# Currently does not link properly.
 #        if self.options.gif:
 #            self.requires("giflib/[>=5.1.3]@bincrafters/stable", private=True)
 #            self.options["giflib"].shared = False
         if self.options.pdf:
-            self.requires("libharu/[>=2.3.0]@joakimono/stable", private=True)
+            self.requires("libharu/[>=2.3.0]@joakimono/testing", private=True)
             self.options["libharu"].shared = False
         if self.options.hdf5:
             if not self.options.lgpl:
@@ -119,22 +118,31 @@ class MathglConan(ConanFile):
         
     def source(self):
     
-        link = "https://sourceforge.net/projects/mathgl/files/mathgl/mathgl%20{0}/mathgl-{0}.tar.gz".format(self.version)
-        tools.get(link, sha1="6560acd7572fe4146c4adb62b3832c072ba74604")
+        #The newest release has bugs (won't compile on windows): 2.4.1. Revert to this way once a functional release appears
+        #link = "https://sourceforge.net/projects/mathgl/files/mathgl/mathgl%20{0}/mathgl-{0}.tar.gz".format(self.version)
+        #tools.get(link, sha1="6560acd7572fe4146c4adb62b3832c072ba74604") # sha1 is for 2.4.1
 
+        r = svn.remote.RemoteClient('https://svn.code.sf.net/p/mathgl/code/mathgl-2x')
+        r.export('mathgl-{}'.format(self.version),revision=1544) # this revision is version 2.4.2
+        
         tools.patch(patch_file="patch/CMakeLists.patch", base_path=self.source_dir)
+        tools.patch(patch_file="patch/abstract.patch", base_path=self.source_dir)
         
     def build(self):
         cmake = CMake(self)
-        cmake.definitions.update(self.cmake_options)        
+        cmake.definitions.update(self.cmake_options)
         cmake.configure(source_folder=self.source_dir)
         cmake.build()
         cmake.install()
 
         #        "shared=True", Both are built anyway: only 1 build 2 configs..
     def package(self):
-        self.copy("COPYING*", dst="licenses", src=self.source_dir,
-                  ignore_case=True, keep_path=False) 
+        if self.options.lgpl:
+            theLicense = 'COPYING_LGPL'
+        else:
+            theLicense = 'COPYING'
+        self.copy(theLicense, dst="licenses", src=self.source_dir,
+                  ignore_case=True, keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = ["mgl"]

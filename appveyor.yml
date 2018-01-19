@@ -10,6 +10,7 @@ environment:
     CONAN_LOGIN_USERNAME: "joakimono"
     CONAN_CHANNEL: "testing"
     CONAN_UPLOAD: "https://api.bintray.com/conan/joakimono/conan"
+    CONAN_PIP_PACKAGE: svn
 
     matrix:
         - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
