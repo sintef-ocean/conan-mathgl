@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from conans import ConanFile, CMake, tools
 import svn.remote
 
@@ -11,7 +14,8 @@ class MathglConan(ConanFile):
     description = "MathGL is a library for making high-quality scientific graphics under Linux and Windows."
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
-    source_dir = "mathgl-{}".format(version)
+    source_subfolder = "mathgl-{}".format(version)
+    build_subfolder = "build_subfolder"
     exports_sources = "patch/*"
     options = {"shared": [True, False],
                "lgpl": [True, False],
@@ -37,9 +41,9 @@ class MathglConan(ConanFile):
                "all_swig": [True, False]
     }
     default_options = ("shared=True",
-                       "lgpl=False",
+                       "lgpl=True",
                        "double_precision=True",
-                       "rvalue_support=True",            
+                       "rvalue_support=False",            
                        "pthread=False",
                        "pthr_widget=False",
                        "openmp=True",
@@ -52,7 +56,7 @@ class MathglConan(ConanFile):
                        "png=True",
                        "jpeg=True",
                        "gif=False",
-                       "pdf=False",
+                       "pdf=True",
                        "gsl=False",
                        "hdf5=False",
                        "mpi=False",
@@ -91,11 +95,7 @@ class MathglConan(ConanFile):
             self.add_cmake_opt("hdf5", self.options.hdf5)
             self.add_cmake_opt("all-swig", self.options.all_swig)
 
-        # expected to be found w/o conan: opengl, glut, fltk, mpi, ltdl, gsl
-        if self.options.wxWidgets:
-            self.requires("wxWidgets/[>3.0.3]@cjwddtc/stable") # shared linking?"
-        if self.options.qt5:
-            self.requires("qt5/[>=5.10]@joakimono/stable") #  shared linking?
+        # expected to be found w/o conan: opengl, glut, fltk, wxwidgets, mpi, ltdl, gsl, qt
         if self.options.zlib:
             self.requires("zlib/[>=1.2.11]@conan/stable", private=True)
             self.options["zlib"].shared = False
@@ -105,16 +105,16 @@ class MathglConan(ConanFile):
         if self.options.jpeg:
             self.requires("libjpeg-turbo/[>=1.5.2]@bincrafters/stable", private=True)
             self.options["libjpeg-turbo"].shared = False
-# Currently does not link properly.
-#        if self.options.gif:
-#            self.requires("giflib/[>=5.1.3]@bincrafters/stable", private=True)
-#            self.options["giflib"].shared = False
+            # set jpeg version 62
+        if self.options.gif:
+            self.requires("giflib/[>=5.1.3]@bincrafters/stable", private=True)
+            self.options["giflib"].shared = False
         if self.options.pdf:
-            self.requires("libharu/[>=2.3.0]@joakimono/testing", private=True)
+            self.requires("libharu/[>=2.3.0]@joakimono/stable", private=True)
             self.options["libharu"].shared = False
         if self.options.hdf5:
             if not self.options.lgpl:
-                self.requires("hdf5/[>=1.10.1]@joakimono/stable")
+                self.requires("hdf5/[>=1.10.1]@joakimono/stable") # Not implemented
         
     def source(self):
     
@@ -123,31 +123,52 @@ class MathglConan(ConanFile):
         #tools.get(link, sha1="6560acd7572fe4146c4adb62b3832c072ba74604") # sha1 is for 2.4.1
 
         r = svn.remote.RemoteClient('https://svn.code.sf.net/p/mathgl/code/mathgl-2x')
-        r.export('mathgl-{}'.format(self.version),revision=1544) # this revision is version 2.4.2
+        r.export(self.source_subfolder,revision=1544) # this revision is version 2.4.2
         
-        tools.patch(patch_file="patch/CMakeLists.patch", base_path=self.source_dir)
-        tools.patch(patch_file="patch/abstract.patch", base_path=self.source_dir)
+        tools.patch(patch_file="patch/CMakeLists.patch", base_path=self.source_subfolder)
+        tools.patch(patch_file="patch/abstract.patch", base_path=self.source_subfolder)
+        tools.patch(patch_file="patch/fltk.patch", base_path=self.source_subfolder)
         
     def build(self):
         cmake = CMake(self)
         cmake.definitions.update(self.cmake_options)
-        cmake.configure(source_folder=self.source_dir)
+        if self.options.shared and self.settings.os == "Windows":
+            cmake.definitions["enable-dep-dll"] = "ON"
+        cmake.configure(source_folder=self.source_subfolder,
+                        build_folder=self.build_subfolder)
         cmake.build()
         cmake.install()
 
-        #        "shared=True", Both are built anyway: only 1 build 2 configs..
+    def build_id(self):
+        self.info_build.options.shared = "Any"
+
     def package(self):
         if self.options.lgpl:
             theLicense = 'COPYING_LGPL'
         else:
             theLicense = 'COPYING'
-        self.copy(theLicense, dst="licenses", src=self.source_dir,
+        self.copy(theLicense, dst="licenses", src=self.source_subfolder,
                   ignore_case=True, keep_path=False)
+        if self.options.shared:
+            pass # The dynamic version is needed for the bin/mglconv
 
     def package_info(self):
         self.cpp_info.libs = ["mgl"]
-        if not self.options.shared and self.settings.os == "Windows":
-            self.cpp_info.libs[0] += "-static"
-        if self.settings.build_type == "Debug" and self.settings.os == "Windows":
-            self.cpp_info.libs[0] += "d"
-        
+        if self.options.fltk:
+            self.cpp_info.libs.append('mgl-fltk')
+        if self.options.glut:
+            self.cpp_info.libs.append('mgl-glut')
+        if self.options.qt5:
+            self.cpp_info.libs.append('mgl-qt5')
+            self.cpp_info.libs.append('mgl-qt')
+            if self.options.fltk:
+                self.cpp_info.libs.append('mgl-wnd')
+        if self.options.wxWidgets:
+            self.cpp_info.libs.append('mgl-wx')
+
+        if not self.options.shared and self.settings.compiler == "Visual Studio":
+            for lib in range(len(self.cpp_info.libs)):
+                self.cpp_info.libs[lib] += "-static"
+        if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
+            for lib in range(len(self.cpp_info.libs)):
+                self.cpp_info.libs[lib] += "d"

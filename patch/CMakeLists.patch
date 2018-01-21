@@ -1,6 +1,6 @@
 --- CMakeLists.txt	2017-12-12 15:10:05.121588000 +0100
 +++ New_CMakeLists.txt	2018-01-19 14:16:19.467058100 +0100
-@@ -1,21 +1,25 @@
+@@ -1,21 +1,30 @@
 -cmake_minimum_required(VERSION 2.8.12)
 +cmake_minimum_required(VERSION 3.1.2)
  if(POLICY CMP0043)
@@ -9,10 +9,15 @@
  
 -project( MathGL2 )
 +project( MathGL2 C CXX)
-+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
++include(${CMAKE_BINARY_DIR}/../conanbuildinfo.cmake)
 +conan_basic_setup()
 +set(CMAKE_CXX_STANDARD 11)
 +set(CMAKE_POSITION_INDEPENDENT_CODE:BOOL ON)
++if (APPLE)
++    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
++else()
++    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
++endif()
  
  set(mgl_clean_files )
  set(MGL_DEP_LIBS)
