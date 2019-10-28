@@ -22,7 +22,7 @@ The package is usually consumed using the `conan install` command or a *conanfil
 
    ```
    [requires]
-   mathgl/[>=2.6.2]@joakimono/stable
+   mathgl/[>=2.4.4]@joakimono/stable
 
    [options]
    mathgl:shared=False

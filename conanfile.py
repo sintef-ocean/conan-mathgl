@@ -6,7 +6,7 @@ import svn.remote
 
 class MathglConan(ConanFile):
     name = "mathgl"
-    version = "2.4.2"
+    version = "2.4.4"
     license = "LGPL-3.0-only | GPL-3.0-only"
     url = "https://github.com/joakimono/conan-mathgl"
     author = "Joakim Haugen (joakim.haugen@gmail.com)"
@@ -43,7 +43,7 @@ class MathglConan(ConanFile):
     default_options = ("shared=True",
                        "lgpl=True",
                        "double_precision=True",
-                       "rvalue_support=False",            
+                       "rvalue_support=False",
                        "pthread=False",
                        "pthr_widget=False",
                        "openmp=True",
@@ -68,8 +68,8 @@ class MathglConan(ConanFile):
         if doAdd:
             self.cmake_options["enable-{}".format(val)] = 'ON'
         else:
-            self.cmake_options["enable-{}".format(val)] = 'OFF'            
-    
+            self.cmake_options["enable-{}".format(val)] = 'OFF'
+
     def requirements(self):
 
         self.add_cmake_opt("lgpl", self.options.lgpl)
@@ -107,7 +107,7 @@ class MathglConan(ConanFile):
             self.options["libjpeg-turbo"].shared = False
             # set jpeg version 62
         if self.options.gif:
-            self.requires("giflib/[>=5.1.3]@bincrafters/stable", private=True)
+            self.requires("giflib/[>=5.1.4]@bincrafters/stable", private=True)
             self.options["giflib"].shared = False
         if self.options.pdf:
             self.requires("libharu/[>=2.3.0]@joakimono/stable", private=True)
@@ -115,20 +115,23 @@ class MathglConan(ConanFile):
         if self.options.hdf5:
             if not self.options.lgpl:
                 self.requires("hdf5/[>=1.10.1]@joakimono/stable") # Not implemented
-        
+
     def source(self):
-    
+
         #The newest release has bugs (won't compile on windows): 2.4.1. Revert to this way once a functional release appears
         #link = "https://sourceforge.net/projects/mathgl/files/mathgl/mathgl%20{0}/mathgl-{0}.tar.gz".format(self.version)
         #tools.get(link, sha1="6560acd7572fe4146c4adb62b3832c072ba74604") # sha1 is for 2.4.1
 
-        r = svn.remote.RemoteClient('https://svn.code.sf.net/p/mathgl/code/mathgl-2x')
-        r.export(self.source_subfolder,revision=1544) # this revision is version 2.4.2
-        
+        #r = svn.remote.RemoteClient('https://svn.code.sf.net/p/mathgl/code/mathgl-2x')
+        #r.export(self.source_subfolder,revision=1544) # this revision is version 2.4.2
+
+        link = "https://sourceforge.net/projects/mathgl/files/mathgl/mathgl%20{0}/mathgl-{0}.tar.gz".format(self.version)
+
+
         tools.patch(patch_file="patch/CMakeLists.patch", base_path=self.source_subfolder)
         tools.patch(patch_file="patch/abstract.patch", base_path=self.source_subfolder)
         tools.patch(patch_file="patch/fltk.patch", base_path=self.source_subfolder)
-        
+
     def build(self):
         cmake = CMake(self)
         cmake.definitions.update(self.cmake_options)
