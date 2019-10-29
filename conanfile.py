@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, CMake, tools
-import svn.remote
+#import svn.remote
 
 class MathglConan(ConanFile):
     name = "mathgl"
@@ -126,7 +126,6 @@ class MathglConan(ConanFile):
 
         tools.patch(patch_file="patch/CMakeLists.patch", base_path=self.source_subfolder)
         tools.patch(patch_file="patch/abstract.patch", base_path=self.source_subfolder)
-        tools.patch(patch_file="patch/fltk.patch", base_path=self.source_subfolder)
 
     def build(self):
         cmake = CMake(self)
