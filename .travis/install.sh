@@ -19,11 +19,6 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     pyenv activate conan
 fi
 
-if [[ "$(uname -s)" == 'Linux' ]]; then
-
-    sudo apt update && sudo apt install -y libgl1-mesa-dev
-fi
-
 pip install conan --upgrade
 pip install conan_package_tools
 
