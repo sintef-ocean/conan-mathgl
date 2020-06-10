@@ -123,14 +123,10 @@ class MathglConan(ConanFile):
 
     def source(self):
 
-        #r = svn.remote.RemoteClient('https://svn.code.sf.net/p/mathgl/code/mathgl-2x')
-        #r.export(self.source_subfolder,revision=1544) # this revision is version 2.4.2
-
         link = "https://sourceforge.net/projects/mathgl/files/mathgl/mathgl%20{0}/mathgl-{0}.tar.gz".format(self.version)
         tools.get(link, sha1="c7faa770a78a8b6783a4eab6959703172f28b329") # sha1 is for 2.4.4
 
         tools.patch(patch_file="patch/CMakeLists.patch", base_path=self.source_subfolder)
-        tools.patch(patch_file="patch/abstract.patch", base_path=self.source_subfolder)
 
     def build(self):
         cmake = CMake(self)
