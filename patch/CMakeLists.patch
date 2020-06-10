@@ -1,11 +1,15 @@
 --- CMakeLists.txt	2019-10-29 10:52:18.507507100 +0100
 +++ New_CMakeLists.txt	2019-10-29 10:51:59.303243000 +0100
-@@ -1,6 +1,15 @@
+@@ -1,6 +1,19 @@
  cmake_minimum_required(VERSION 3.1.0)
  
 -project( MathGL2 )
 +project( MathGL2 C CXX )
 +include(${CMAKE_BINARY_DIR}/../conan_paths.cmake)
++find_package(zlib REQUIRED)
++find_package(libjpeg-turbo REQUIRED)
++find_package(libharu REQUIRED)
++find_package(libpng REQUIRED)
 +
 +set(CMAKE_CXX_STANDARD 11)
 +set(CMAKE_POSITION_INDEPENDENT_CODE:BOOL ON)
@@ -17,7 +21,7 @@
  
  set(mgl_clean_files )
  set(MGL_DEP_LIBS)
-@@ -14,7 +23,7 @@
+@@ -14,7 +27,7 @@
  		None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel." FORCE)
  endif(NOT CMAKE_BUILD_TYPE)
  
@@ -26,7 +30,7 @@
  set(MathGL_VERSION_MAJOR 2)
  set(MathGL_VERSION_MINOR 4)
  set(MathGL_PATCH_VERSION 4)
-@@ -535,16 +544,9 @@
+@@ -535,16 +548,9 @@
  	if(NOT MGL_HAVE_PNG)
  		message(SEND_ERROR "You have to enable PNG if you plan to use PDF export.")
  	endif(NOT MGL_HAVE_PNG)
