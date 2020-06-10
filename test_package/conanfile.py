@@ -8,7 +8,7 @@ import os
 class MathglTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = ("cmake_paths", "cmake_find_package")
-    requirements = ("mathgl/2.4.4@sintef/stable")
+    requirements = "mathgl/2.4.4@sintef/stable"
 
     def build(self):
         cmake = CMake(self)
@@ -23,7 +23,7 @@ class MathglTestConan(ConanFile):
         program = 'example'
         if self.settings.os == "Windows":
             program += '.exe'
-            test_path = os.path.join(self.build_folder,
+            test_path = os.path.join(str(self.build_folder),
                                      str(self.settings.build_type))
         else:
             test_path = '.' + os.sep
