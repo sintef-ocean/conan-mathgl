@@ -97,7 +97,9 @@ class MathglConan(ConanFile):
             self.add_cmake_opt("hdf5", self.options.hdf5)
             self.add_cmake_opt("all-swig", self.options.all_swig)
 
-        # expected to be found w/o conan: opengl, glut, fltk, wxwidgets, mpi, ltdl, gsl, qt
+        #self.requires("opengl/virtual@bincrafters/stable")
+        # expected to be found w/o conan: glut, fltk, wxwidgets, mpi, ltdl, gsl, qt
+        # TODO add above dependencies using conan packages
         if self.options.zlib:
             self.requires("zlib/[>=1.2.11]@conan/stable", private=True)
             self.options["zlib"].shared = False
