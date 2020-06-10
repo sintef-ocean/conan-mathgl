@@ -1,10 +1,7 @@
 import argparse
 import importlib
 import json
-import random
 import requests as r
-import sys
-import time
 
 parser = argparse.ArgumentParser(description='Set bintray info')
 parser.add_argument('conanlib', type=str, help='Name of conan class in conanfile.py')
@@ -13,7 +10,6 @@ parser.add_argument('password', type=str, help='Bintray password')
 
 def main(argvs):
 
-    time.sleep(random.uniform(1, 5))  # Add random delay
     args = parser.parse_args(argvs)
 
     mod = importlib.import_module("conanfile")
@@ -38,6 +34,7 @@ def main(argvs):
         print("Set package info: {}".format(res.reason))
 
     exit(0)
+
 
 if __name__ == "__main__":
     import sys
