@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conans import ConanFile, CMake, tools
+from conans import ConanFile, CMake
 import os
+
 
 class MathglTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake"
+    generators = ("cmake_paths", "cmake_find_package")
 
     def build(self):
         cmake = CMake(self)
@@ -17,6 +18,12 @@ class MathglTestConan(ConanFile):
         self.copy("*.dll", dst="bin", src="bin")
 
     def test(self):
-        if not tools.cross_building(self.settings):
-            os.chdir("bin")
-            self.run(".{}example".format(os.sep))
+        program = 'example'
+        if self.settings.os == "Windows":
+            program += '.exe'
+            test_path = os.path.join(self.build_folder,
+                                     str(self.settings.build_type))
+        else:
+            test_path = '.' + os.sep
+
+        self.run(os.path.join(test_path, program))

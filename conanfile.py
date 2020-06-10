@@ -7,13 +7,15 @@ from conans import ConanFile, CMake, tools
 class MathglConan(ConanFile):
     name = "mathgl"
     version = "2.4.4"
-    license = "LGPL-3.0-only | GPL-3.0-only"
+    license = "LGPL-3.0 | GPL-3.0"
+    licenses = ["LGPL-3.0", "GPL-3.0"]
+    # LGPL-3.0-only | GPL-3.0-only
     url = "https://github.com/joakimono/conan-mathgl"
     author = "Joakim Haugen (joakim.haugen@gmail.com)"
     homepage ="http://mathgl.sourceforge.net"
     description = "MathGL is a library for making high-quality scientific graphics under Linux and Windows."
     settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake"
+    generators = ("cmake_paths", "cmake_find_package")
     source_subfolder = "mathgl-{}".format(version)
     build_subfolder = "build_subfolder"
     exports_sources = "patch/*"
@@ -110,11 +112,11 @@ class MathglConan(ConanFile):
             self.requires("giflib/[>=5.1.4]@bincrafters/stable", private=True)
             self.options["giflib"].shared = False
         if self.options.pdf:
-            self.requires("libharu/[>=2.3.0]@joakimono/stable", private=True)
+            self.requires("libharu/[>=2.3.0]@sintef/stable", private=True)
             self.options["libharu"].shared = False
         if self.options.hdf5:
             if not self.options.lgpl:
-                self.requires("hdf5/[>=1.10.1]@joakimono/stable") # Not implemented
+                self.requires("hdf5/[>=1.10.1]@sintef/stable") # Not implemented
 
     def source(self):
 

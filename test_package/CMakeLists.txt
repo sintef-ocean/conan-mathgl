@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.1.2)
+cmake_minimum_required(VERSION 3.13)
 project(MathglTest CXX)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
+find_package(mathgl MODULE REQUIRED)
 
 add_executable(example example.cpp)
-target_link_libraries(example CONAN_PKG::mathgl)
+target_link_libraries(example mathgl::mathgl)

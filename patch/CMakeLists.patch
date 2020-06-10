@@ -5,8 +5,8 @@
  
 -project( MathGL2 )
 +project( MathGL2 C CXX )
-+include(${CMAKE_BINARY_DIR}/../conanbuildinfo.cmake)
-+conan_basic_setup()
++include(${CMAKE_BINARY_DIR}/../conan_paths.cmake)
++
 +set(CMAKE_CXX_STANDARD 11)
 +set(CMAKE_POSITION_INDEPENDENT_CODE:BOOL ON)
 +if (APPLE)
@@ -40,9 +40,9 @@
 -	endif(NOT HPDF_INCLUDE_DIR)
 -	include_directories(${HPDF_INCLUDE_DIR})
 -	set(MGL_DEP_LIBS ${HPDF_LIB} ${MGL_DEP_LIBS})
-+        find_package(Libharu REQUIRED)
-+        include_directories(${LIBHARU_INCLUDE_DIR})
-+        set(MGL_DEP_LIBS ${LIBHARU_LIBRARIES} ${MGL_DEP_LIBS})
++        find_package(libharu REQUIRED)
++
++        set(MGL_DEP_LIBS libharu::libharu ${MGL_DEP_LIBS})
  else(enable-pdf)
  	set(MGL_HAVE_PDF 0)
  endif(enable-pdf)

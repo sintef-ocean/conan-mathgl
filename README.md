@@ -1,11 +1,12 @@
-[![Download](https://api.bintray.com/packages/joakimono/conan/mathgl%3Ajoakimono/images/download.svg)](https://bintray.com/joakimono/conan/mathgl%3Ajoakimono/_latestVersion)
-[![Build Status UNIX](https://travis-ci.org/joakimono/conan-mathgl.png?branch=master)](https://travis-ci.org/joakimono/conan-mathgl)
-[![Build Status WIND](https://ci.appveyor.com/api/projects/status/github/joakimono/conan-mathgl?branch=master&svg=true)](https://ci.appveyor.com/project/joakimono/conan-mathgl)
+[![GCC Conan](https://github.com/sintef-ocean/conan-mathgl/workflows/GCC%20Conan/badge.svg)](https://github.com/sintef-ocean/conan-mathgl/actions?query=workflow%3A"GCC+Conan")
+[![Clang Conan](https://github.com/sintef-ocean/conan-mathgl/workflows/Clang%20Conan/badge.svg)](https://github.com/sintef-ocean/conan-mathgl/actions?query=workflow%3A"Clang+Conan")
+[![MSVC Conan](https://github.com/sintef-ocean/conan-mathgl/workflows/MSVC%20Conan/badge.svg)](https://github.com/sintef-ocean/conan-mathgl/actions?query=workflow%3A"MSVC+Conan")
+[![Download](https://api.bintray.com/packages/sintef-ocean/conan/mathgl%3Asintef/images/download.svg)](https://bintray.com/sintef-ocean/conan/mathgl%3Asintef/_latestVersion)
 
 
 [Conan.io](https://conan.io) recipe for [mathgl](http://mathgl.sourceforge.net).
 
-The recipe generates library packages, which can be found at [Bintray](https://bintray.com/joakimono/conan/mathgl%3Ajoakimono).
+The recipe generates library packages, which can be found at [Bintray](https://bintray.com/sintef-ocean/conan/mathgl%3Asintef).
 The package is usually consumed using the `conan install` command or a *conanfile.txt*.
 
 ## How to use this package
@@ -13,7 +14,7 @@ The package is usually consumed using the `conan install` command or a *conanfil
 1. Add remote to conan's package [registry.txt](http://docs.conan.io/en/latest/reference/config_files/registry.txt.html):
 
    ```bash
-   $ conan remote add joakimono https://api.bintray.com/conan/joakimono/conan
+   $ conan remote add sintef https://api.bintray.com/conan/sintef-ocean/conan
    ```
 
 2. Using *conanfile.txt* in your project with *cmake*
@@ -22,7 +23,7 @@ The package is usually consumed using the `conan install` command or a *conanfil
 
    ```
    [requires]
-   mathgl/[>=2.4.4]@joakimono/stable
+   mathgl/[>=2.6.2]@sintef/stable
 
    [options]
    mathgl:shared=False
@@ -31,59 +32,56 @@ The package is usually consumed using the `conan install` command or a *conanfil
    licenses, * -> ./licenses @ folder=True
 
    [generators]
-   cmake
+   cmake_paths
+   cmake_find_package
    ```
 
    Insert into your *CMakeLists.txt* something like the following lines:
    ```cmake
-   cmake_minimum_required(VERSION 3.1.2)
+   cmake_minimum_required(VERSION 3.13)
    project(TheProject CXX)
 
-   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-   conan_basic_setup(TARGETS)
+   include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+   find_package(mathgl MODULE REQUIRED)
 
    add_executable(the_executor code.cpp)
-   target_link_libraries(the_executor CONAN_PKG::mathgl)
+   target_link_libraries(the_executor mathgl::mathgl)
    ```
    Then, do
    ```bash
    $ mkdir build && cd build
-   $ conan install ..
+   $ conan install .. -s build_type=<build_type>
    ```
+   where `<build_type>` is e.g. `Debug` or `Release`.
    You can now continue with the usual dance with cmake commands for configuration and compilation. For details on how to use conan, please consult [Conan.io docs](http://docs.conan.io/en/latest/)
 
 ## Package options
 
 Option | Default | Domain
 ---|---|---
-shared|True|[True, False]
-lgpl|True|[True, False]
-double_precision|True|[True, False]
-rvalue_support|False|[True, False]
-pthread|False|[True, False]
-pthr_widget|False|[True, False]
-openmp|True|[True, False]
-opengl|True|[True, False]
-glut|False|[True, False]
-fltk|False|[True, False]
-wxWidgets|False|[True, False]
-qt5|False|[True, False]
-zlib|True|[True, False]
-png|True|[True, False]
-jpeg|True|[True, False]
-gif|False|[True, False]
-pdf|True|[True, False]
-gsl|False|[True, False]
-hdf5|False|[True, False]
-mpi|False|[True, False]
-ltdl|False|[True, False]
-all_swig|False|[True, False]
+shared   | True  | [True, False]
+lgpl     | True  | [True, False]
+double_precision | True  | [True, False]
+rvalue_support | False  | [True, False]
+pthread  | False  | [True, False]
+pthr_widget | False  | [True, False]
+openmp   | True  | [True, False]
+opengl   | True  | [True, False]
+glut     | False  | [True, False]
+fltk     | False  | [True, False]
+wxWidgets | False  | [True, False]
+qt5      | False  | [True, False]
+zlib     | True  | [True, False]
+png      | True  | [True, False]
+jpeg     | True  | [True, False]
+gif      | False  | [True, False]
+pdf      | True  | [True, False]
+gsl      | False  | [True, False]
+hdf5     | False  | [True, False], not yet supported
+mpi      | False  | [True, False]
+ltdl     | False  | [True, False]
+all_swig | False | [True, False]
 
 ## Known recipe issues
 
-* *fltk*, *wxWidgets*, *qt5*, *glut*, *hdf5*, *ltdl*, *opengl* will not currently be acquired with conan mechanisms, as such, the desired package(s) must be installed manually.
-* There is a future plan to make a recipe for the *hdf5* dependency, there also exists a recipe in conan-transit, I believe.
-* Not all options have been exposed into to the recipe option
-* *rvalue* enabled does not currently compile
-* Not tested for mingw or cygwin on Windows.
-* Possible JPEG version mismatch (62 vs 80) on Windows (TBD)
+Some
