@@ -16,8 +16,8 @@ class MathglTestConan(ConanFile):
         cmake.build()
 
     def imports(self):
-        self.copy("*.dll", dst="bin", keep_path=False)
-        self.copy("*.lib", dst="lib", keep_path=False)
+        if self.settings.os == "Windows":
+            self.copy("*.dll", dst=str(self.settings.build_type), keep_path=False)
 
     def test(self):
         program = 'example'
