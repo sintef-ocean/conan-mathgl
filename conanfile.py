@@ -42,13 +42,13 @@ class MathglConan(ConanFile):
                "ltdl": [True, False],
                "all_swig": [True, False]
     }
-    default_options = ("shared=True",
+    default_options = ("shared=False",
                        "lgpl=True",
                        "double_precision=True",
                        "rvalue_support=False",
                        "pthread=False",
                        "pthr_widget=False",
-                       "openmp=True",
+                       "openmp=False",
                        "opengl=True",
                        "glut=False",
                        "fltk=False",
@@ -110,7 +110,7 @@ class MathglConan(ConanFile):
             self.requires("libpng/[>=1.6.34]@bincrafters/stable", private=True)
             self.options["libpng"].shared = False
         if self.options.jpeg:
-            self.requires("libjpeg-turbo/[>=1.5.2]@bincrafters/stable", private=True)
+            self.requires("libjpeg-turbo/[>=1.5.2 <2.0]@bincrafters/stable", private=True)
             self.options["libjpeg-turbo"].shared = False
             # set jpeg version 62
         if self.options.gif:
@@ -130,20 +130,28 @@ class MathglConan(ConanFile):
 
         tools.patch(patch_file="patch/CMakeLists.patch", base_path=self.source_subfolder)
 
-    def build(self):
+    def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions.update(self.cmake_options)
         if self.options.shared and self.settings.os == "Windows":
             cmake.definitions["enable-dep-dll"] = "ON"
         cmake.configure(source_folder=self.source_subfolder,
                         build_folder=self.build_subfolder)
+        return cmake
+
+
+    def build(self):
+        cmake = self._configure_cmake()
         cmake.build()
-        cmake.install()
 
     def build_id(self):
         self.info_build.options.shared = "Any"
 
     def package(self):
+        cmake = self._configure_cmake()
+        cmake.install()
+        self.copy("*.pdb", dst="lib")
+
         if self.options.lgpl:
             theLicense = 'COPYING_LGPL'
         else:
@@ -154,6 +162,7 @@ class MathglConan(ConanFile):
             pass # The dynamic version is needed for the bin/mglconv
 
     def package_info(self):
+        self.cpp_info.builddirs.append("cmake")
         self.cpp_info.libs = ["mgl"]
         if self.options.fltk:
             self.cpp_info.libs.append('mgl-fltk')
@@ -170,6 +179,4 @@ class MathglConan(ConanFile):
         if not self.options.shared and self.settings.compiler == "Visual Studio":
             for lib in range(len(self.cpp_info.libs)):
                 self.cpp_info.libs[lib] += "-static"
-        if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
-            for lib in range(len(self.cpp_info.libs)):
-                self.cpp_info.libs[lib] += "d"
+            self.cpp_info.libs.append("mgl")

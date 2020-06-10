@@ -46,6 +46,7 @@ jobs:
           conan create -s build_type=${{ matrix.build_type }} `
             -s compiler.version=${{ matrix.compiler_version }} `
             -s compiler.toolset=${{ matrix.compiler_toolset }} `
+            -s compiler.cppstd=14 `
             -o ${env:SINTEF_LIBNAME}:${{ matrix.option_shared }} `
             -b missing . sintef/stable
       - name: Conan upload

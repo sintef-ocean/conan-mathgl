@@ -60,13 +60,13 @@ The package is usually consumed using the `conan install` command or a *conanfil
 
 Option | Default | Domain
 ---|---|---
-shared   | True  | [True, False]
+shared   | False | [True, False]
 lgpl     | True  | [True, False]
 double_precision | True  | [True, False]
 rvalue_support | False  | [True, False]
 pthread  | False  | [True, False]
 pthr_widget | False  | [True, False]
-openmp   | True  | [True, False]
+openmp   | False | [True, False]
 opengl   | True  | [True, False]
 glut     | False  | [True, False]
 fltk     | False  | [True, False]

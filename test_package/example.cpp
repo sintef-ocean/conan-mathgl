@@ -4,6 +4,8 @@
 
 int main() {
 
+  std::cout << "Testing" << std::endl;
+
   mglGraph mg;
   mg.Alpha(true);
   return EXIT_SUCCESS;
