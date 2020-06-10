@@ -28,8 +28,7 @@ def main(argvs):
                   data=json.dumps(info))
 
     if not res.ok:
-        print(res.reason)
-        exit(1)
+        print("Could not set package info: {}".format(res.reason))
     else:
         print("Set package info: {}".format(res.reason))
 
