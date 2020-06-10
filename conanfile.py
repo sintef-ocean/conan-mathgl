@@ -99,7 +99,9 @@ class MathglConan(ConanFile):
 
         # expected to be found w/o conan: glut, fltk, wxwidgets, mpi, ltdl, gsl, qt
         # TODO add above dependencies using conan packages
-        self.requires("opengl/virtual@bincrafters/stable")
+
+        if self.settings.os != "Windows":
+            self.requires("opengl/virtual@bincrafters/stable")
 
         if self.options.zlib:
             self.requires("zlib/[>=1.2.11]@conan/stable", private=True)
