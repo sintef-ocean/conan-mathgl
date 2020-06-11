@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, CMake, tools
-#import svn.remote
+
 
 class MathglConan(ConanFile):
     name = "mathgl"
@@ -10,10 +10,13 @@ class MathglConan(ConanFile):
     license = "LGPL-3.0 | GPL-3.0"
     licenses = ["LGPL-3.0", "GPL-3.0"]
     # LGPL-3.0-only | GPL-3.0-only
-    url = "https://github.com/joakimono/conan-mathgl"
+    url = "https://github.com/sintef-ocean/conan-mathgl"
     author = "Joakim Haugen (joakim.haugen@gmail.com)"
-    homepage ="http://mathgl.sourceforge.net"
-    description = "MathGL is a library for making high-quality scientific graphics under Linux and Windows."
+    homepage = "http://mathgl.sourceforge.net"
+    description = \
+        "MathGL is a library for making high-quality scientific graphics "\
+        "under Linux and Windows."
+    topics = ("mathgl", "graphics", "plotting")
     settings = "os", "compiler", "build_type", "arch"
     generators = ("cmake_paths", "cmake_find_package")
     source_subfolder = "mathgl-{}".format(version)
@@ -97,8 +100,8 @@ class MathglConan(ConanFile):
             self.add_cmake_opt("hdf5", self.options.hdf5)
             self.add_cmake_opt("all-swig", self.options.all_swig)
 
+        # TODO add dependencies using conan packages
         # expected to be found w/o conan: glut, fltk, wxwidgets, mpi, ltdl, gsl, qt
-        # TODO add above dependencies using conan packages
 
         if self.settings.os != "Windows":
             self.requires("opengl/virtual@bincrafters/stable")
@@ -139,7 +142,6 @@ class MathglConan(ConanFile):
                         build_folder=self.build_subfolder)
         return cmake
 
-
     def build(self):
         cmake = self._configure_cmake()
         cmake.build()
@@ -159,7 +161,7 @@ class MathglConan(ConanFile):
         self.copy(theLicense, dst="licenses", src=self.source_subfolder,
                   ignore_case=True, keep_path=False)
         if self.options.shared:
-            pass # The dynamic version is needed for the bin/mglconv
+            pass  # The dynamic version is needed for the bin/mglconv
 
     def package_info(self):
         self.cpp_info.builddirs.append("cmake")
