@@ -8,7 +8,6 @@ import os
 class MathglTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = ("cmake_paths", "cmake_find_package")
-    requires = "mathgl/2.4.4@sintef/stable"
 
     def build(self):
         cmake = CMake(self)

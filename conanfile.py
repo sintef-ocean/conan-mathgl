@@ -164,6 +164,7 @@ class MathglConan(ConanFile):
             pass  # The dynamic version is needed for the bin/mglconv
 
     def package_info(self):
+        self.cpp_info.name = 'MathGL'
         self.cpp_info.builddirs.append("cmake")
         self.cpp_info.libs = ["mgl"]
         if self.options.fltk:
