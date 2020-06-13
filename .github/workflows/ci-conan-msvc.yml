@@ -23,12 +23,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019]
-        build_type: [Debug, Release]
-        compiler_version: [16]
         compiler_toolset: [v141, v142]
+        build_type: [Debug, Release]
         option_shared: ['shared=True', 'shared=False']
-
+        compiler_version: [16]
+        os: [windows-2019]
     steps:
       - uses: actions/checkout@v2
       - name: Install prerequisites
@@ -51,7 +50,7 @@ jobs:
             -b missing . sintef/stable
       - name: Conan upload
         run: |
-          conan upload --all -c -r sintef ${env:SINTEF_REFERENCE} --retry 10
+          conan upload --all -c -r sintef ${env:SINTEF_REFERENCE} --retry 10 --force
       - name: Bintray info
         run: |
           python bintray.py ${env:SINTEF_CONAN_CLASS} `
