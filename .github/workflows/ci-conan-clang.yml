@@ -26,6 +26,7 @@ jobs:
         compiler_version: [8, 9, 10]
         build_type: [Debug, Release]
         option_shared: [shared=True, shared=False]
+        option_qt: [qt5=True, qt5=False]
         compiler_libcxx: [libstdc++11]
         os: [ubuntu-20.04]
     steps:
@@ -46,6 +47,7 @@ jobs:
             -s compiler.version=${{ matrix.compiler_version }} \
             -s compiler.libcxx=${{ matrix.compiler_libcxx }} \
             -o ${SINTEF_LIBNAME}:${{ matrix.option_shared }} \
+            -o ${SINTEF_LIBNAME}:${{ matrix.option_qt5 }} \
             -b missing . sintef/stable
       - name: Conan upload
         run: |

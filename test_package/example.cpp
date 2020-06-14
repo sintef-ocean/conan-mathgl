@@ -4,9 +4,12 @@
 
 int main() {
 
-  std::cout << "Testing" << std::endl;
+  std::cout << "Testing MathGL core" << std::endl;
 
   mglGraph mg;
   mg.Alpha(true);
+
+
+
   return EXIT_SUCCESS;
 }

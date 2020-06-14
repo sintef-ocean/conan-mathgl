@@ -25,7 +25,8 @@ jobs:
       matrix:
         compiler_toolset: [v141, v142]
         build_type: [Debug, Release]
-        option_shared: ['shared=True', 'shared=False']
+        option_shared: [shared=True, shared=False]
+        option_qt: [qt5=False]
         compiler_version: [16]
         os: [windows-2019]
     steps:
@@ -47,6 +48,7 @@ jobs:
             -s compiler.toolset=${{ matrix.compiler_toolset }} `
             -s compiler.cppstd=14 `
             -o ${env:SINTEF_LIBNAME}:${{ matrix.option_shared }} `
+            -o ${env:SINTEF_LIBNAME}:${{ matrix.option_qt5 }} `
             -b missing . sintef/stable
       - name: Conan upload
         run: |

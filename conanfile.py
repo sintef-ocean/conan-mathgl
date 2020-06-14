@@ -30,8 +30,6 @@ class MathglConan(ConanFile):
                "pthr_widget": [True, False],
                "openmp": [True, False],
                "opengl": [True, False],
-               "glut": [True, False],
-               "fltk": [True, False],
                "wxWidgets": [True, False],
                "qt5": [True, False],
                "zlib": [True, False],
@@ -44,29 +42,31 @@ class MathglConan(ConanFile):
                "mpi": [True, False],
                "ltdl": [True, False],
                "all_swig": [True, False]
-    }
+               }
+    #          "glut": [True, False],
+    #          "fltk": [True, False],
     default_options = ("shared=False",
                        "lgpl=True",
                        "double_precision=True",
                        "rvalue_support=False",
-                       "pthread=False",
-                       "pthr_widget=False",
+                       "pthread=True",
+                       "pthr_widget=True",
                        "openmp=False",
                        "opengl=True",
-                       "glut=False",
-                       "fltk=False",
                        "wxWidgets=False",
                        "qt5=False",
                        "zlib=True",
                        "png=True",
                        "jpeg=True",
-                       "gif=False",
+                       "gif=True",
                        "pdf=True",
                        "gsl=False",
                        "hdf5=False",
                        "mpi=False",
                        "ltdl=False",
                        "all_swig=False")
+    #                  "glut=False",
+    #                  "fltk=False",
     cmake_options = {}
 
     def add_cmake_opt(self, val, doAdd):
@@ -84,9 +84,9 @@ class MathglConan(ConanFile):
         self.add_cmake_opt("pthr-widget", self.options.pthr_widget)
         self.add_cmake_opt("openmp", self.options.openmp)
         self.add_cmake_opt("opengl", self.options.opengl)
-        self.add_cmake_opt("glut", self.options.glut)
-        self.add_cmake_opt("fltk", self.options.fltk)
-        self.add_cmake_opt("wx", self.options.wxWidgets)
+        # self.add_cmake_opt("glut", self.options.glut)
+        # self.add_cmake_opt("fltk", self.options.fltk)
+        self.add_cmake_opt("wxWidgets", self.options.wxWidgets)
         self.add_cmake_opt("qt5", self.options.qt5)
         self.add_cmake_opt("zlib", self.options.zlib)
         self.add_cmake_opt("png", self.options.png)
@@ -101,30 +101,30 @@ class MathglConan(ConanFile):
             self.add_cmake_opt("all-swig", self.options.all_swig)
 
         # TODO add dependencies using conan packages
-        # expected to be found w/o conan: glut, fltk, wxwidgets, mpi, ltdl, gsl, qt
+        # expected to be found w/o conan: glut, fltk, ltdl, gsl, mpi
 
-        if self.settings.os != "Windows":
+        if self.settings.os != "Windows" and self.options.opengl:
             self.requires("opengl/virtual@bincrafters/stable")
 
         if self.options.zlib:
-            self.requires("zlib/[>=1.2.11]@conan/stable", private=True)
-            self.options["zlib"].shared = False
+            self.requires("zlib/[>=1.2.11]@conan/stable")
         if self.options.png:
-            self.requires("libpng/[>=1.6.34]@bincrafters/stable", private=True)
-            self.options["libpng"].shared = False
+            self.requires("libpng/[>=1.6.34]@bincrafters/stable")
         if self.options.jpeg:
-            self.requires("libjpeg-turbo/[>=1.5.2 <2.0]@bincrafters/stable", private=True)
-            self.options["libjpeg-turbo"].shared = False
+            self.requires("libjpeg-turbo/[>=1.5.2 <2.0]@bincrafters/stable")
             # set jpeg version 62
         if self.options.gif:
-            self.requires("giflib/[>=5.1.4]@bincrafters/stable", private=True)
-            self.options["giflib"].shared = False
+            self.requires("giflib/[>=5.1.4]@bincrafters/stable")
         if self.options.pdf:
-            self.requires("libharu/[>=2.3.0]@sintef/stable", private=True)
-            self.options["libharu"].shared = False
+            self.requires("libharu/[>=2.3.0]@sintef/stable")
         if self.options.hdf5:
             if not self.options.lgpl:
-                self.requires("hdf5/[>=1.10.1]@sintef/stable") # Not implemented
+                self.requires("hdf5/[>=1.8.21]@sintef/stable")
+
+        if self.options.wxWidgets:
+            self.requires("wxwidgets/[>=3.1.0]@bincrafters/stable")
+        if self.options.qt5:
+            self.requires("qt/[>=5.10.0]@bincrafters/stable")
 
     def source(self):
 
@@ -167,15 +167,9 @@ class MathglConan(ConanFile):
         self.cpp_info.name = 'MathGL'
         self.cpp_info.builddirs.append("cmake")
         self.cpp_info.libs = ["mgl"]
-        if self.options.fltk:
-            self.cpp_info.libs.append('mgl-fltk')
-        if self.options.glut:
-            self.cpp_info.libs.append('mgl-glut')
         if self.options.qt5:
             self.cpp_info.libs.append('mgl-qt5')
             self.cpp_info.libs.append('mgl-qt')
-            if self.options.fltk:
-                self.cpp_info.libs.append('mgl-wnd')
         if self.options.wxWidgets:
             self.cpp_info.libs.append('mgl-wx')
 
