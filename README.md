@@ -24,7 +24,7 @@ The package is usually consumed using the `conan install` command or a *conanfil
 
    ```
    [requires]
-   mathgl/[>=2.6.2]@sintef/stable
+   mathgl/[>=2.4.4]@sintef/stable
 
    [options]
    mathgl:shared=False
@@ -43,10 +43,10 @@ The package is usually consumed using the `conan install` command or a *conanfil
    project(TheProject CXX)
 
    include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-   find_package(mathgl MODULE REQUIRED)
+   find_package(MathGL MODULE REQUIRED)
 
    add_executable(the_executor code.cpp)
-   target_link_libraries(the_executor mathgl::mathgl)
+   target_link_libraries(the_executor MathGL::MathGL)
    ```
    Then, do
    ```bash
@@ -68,8 +68,6 @@ pthread  | False  | [True, False]
 pthr_widget | False  | [True, False]
 openmp   | False | [True, False]
 opengl   | True  | [True, False]
-glut     | False  | [True, False]
-fltk     | False  | [True, False]
 wxWidgets | False  | [True, False]
 qt5      | False  | [True, False]
 zlib     | True  | [True, False]
@@ -78,7 +76,7 @@ jpeg     | True  | [True, False]
 gif      | False  | [True, False]
 pdf      | True  | [True, False]
 gsl      | False  | [True, False]
-hdf5     | False  | [True, False], not yet supported
+hdf5     | False  | [True, False]
 mpi      | False  | [True, False]
 ltdl     | False  | [True, False]
 all_swig | False | [True, False]
