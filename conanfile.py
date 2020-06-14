@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, CMake, tools
+from conans.errors import ConanInvalidConfiguration
 
 
 class MathglConan(ConanFile):
@@ -50,7 +51,7 @@ class MathglConan(ConanFile):
                        "double_precision=True",
                        "rvalue_support=False",
                        "pthread=False",
-                       "pthr_widget=True",
+                       "pthr_widget=False",
                        "openmp=False",
                        "opengl=True",
                        "wxWidgets=False",
@@ -125,6 +126,12 @@ class MathglConan(ConanFile):
             self.requires("wxwidgets/[>=3.1.0]@bincrafters/stable")
         if self.options.qt5:
             self.requires("qt/[>=5.10.0]@bincrafters/stable")
+
+    def configure(self):
+        if self.settings.compiler == "Visual Studio":
+            if self.options.pthr_widget or self.options.pthread:
+                raise ConanInvalidConfiguration(
+                    "pthr_widget and pthread are not compatible with Visual Studio")
 
     def source(self):
 
