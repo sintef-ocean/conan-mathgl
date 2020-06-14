@@ -49,7 +49,7 @@ class MathglConan(ConanFile):
                        "lgpl=True",
                        "double_precision=True",
                        "rvalue_support=False",
-                       "pthread=True",
+                       "pthread=False",
                        "pthr_widget=True",
                        "openmp=False",
                        "opengl=True",
