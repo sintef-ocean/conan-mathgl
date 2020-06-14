@@ -34,4 +34,5 @@ class MathglTestConan(ConanFile):
                                          str(self.settings.build_type))
             else:
                 test_path = '.' + os.sep
-            self.run(os.path.join(test_path, program), run_environment=True)
+            self.run(os.path.join(test_path, program) + " -platform offscreen",
+                     run_environment=True)
