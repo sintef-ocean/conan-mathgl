@@ -26,7 +26,7 @@ jobs:
         compiler_toolset: [v141, v142]
         build_type: [Debug, Release]
         option_shared: [shared=True, shared=False]
-        option_qt: [qt5=False]
+        option_qt5: [qt5=False]
         compiler_version: [16]
         os: [windows-2019]
     steps:

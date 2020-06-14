@@ -26,7 +26,7 @@ jobs:
         compiler_version: [6, 7, 8, 9]
         build_type: [Debug, Release]
         option_shared: [shared=True, shared=False]
-        option_qt: [qt5=True, qt5=False]
+        option_qt5: [qt5=True, qt5=False]
         compiler_libcxx: [libstdc++, libstdc++11]
         os: [ubuntu-18.04, ubuntu-20.04]
         exclude:
