@@ -16,11 +16,6 @@ class MathglTestConan(ConanFile):
         cmake.configure()
         cmake.build()
 
-    def imports(self):
-        if self.settings.os == "Windows":
-            self.copy("*.dll", dst=str(self.settings.build_type),
-                      keep_path=False)
-
     def test(self):
         program = 'example'
         if self.settings.os == "Windows":
@@ -29,7 +24,7 @@ class MathglTestConan(ConanFile):
                                      str(self.settings.build_type))
         else:
             test_path = '.' + os.sep
-        self.run(os.path.join(test_path, program))
+        self.run(os.path.join(test_path, program), run_environment=True)
 
         if self.options['mathgl'].qt5:
             program = 'qt_example'
@@ -39,4 +34,4 @@ class MathglTestConan(ConanFile):
                                          str(self.settings.build_type))
             else:
                 test_path = '.' + os.sep
-            self.run(os.path.join(test_path, program))
+            self.run(os.path.join(test_path, program), run_environment=True)
