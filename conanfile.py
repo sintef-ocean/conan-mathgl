@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conans import ConanFile, CMake, tools
+from conans import ConanFile, CMake, tools, RunEnvironment
 from conans.errors import ConanInvalidConfiguration
 
 
@@ -59,7 +59,7 @@ class MathglConan(ConanFile):
                        "zlib=True",
                        "png=True",
                        "jpeg=True",
-                       "gif=True",
+                       "gif=False",
                        "pdf=True",
                        "gsl=False",
                        "hdf5=False",
@@ -112,12 +112,13 @@ class MathglConan(ConanFile):
         if self.options.png:
             self.requires("libpng/[>=1.6.34]@bincrafters/stable")
         if self.options.jpeg:
-            self.requires("libjpeg-turbo/[>=1.5.2 <2.0]@bincrafters/stable")
+            self.requires("libjpeg-turbo/[>=1.5.2 <2.0]@bincrafters/stable", private=True)
             # set jpeg version 62
         if self.options.gif:
             self.requires("giflib/[>=5.1.4]@bincrafters/stable")
         if self.options.pdf:
-            self.requires("libharu/[>=2.3.0]@sintef/stable")
+            self.requires("libharu/[>=2.3.0]@sintef/stable", private=True)
+            self.options["libharu"].shared = False
         if self.options.hdf5:
             if not self.options.lgpl:
                 self.requires("hdf5/[>=1.8.21]@sintef/stable")
@@ -150,15 +151,16 @@ class MathglConan(ConanFile):
         return cmake
 
     def build(self):
-        cmake = self._configure_cmake()
-        cmake.build()
-
-    def build_id(self):
-        self.info_build.options.shared = "Any"
+        env_build = RunEnvironment(self)
+        with tools.environment_append(env_build.vars):
+            cmake = self._configure_cmake()
+            cmake.build()
 
     def package(self):
-        cmake = self._configure_cmake()
-        cmake.install()
+        env_build = RunEnvironment(self)
+        with tools.environment_append(env_build.vars):
+            cmake = self._configure_cmake()
+            cmake.install()
         self.copy("*.pdb", dst="lib")
 
         if self.options.lgpl:
