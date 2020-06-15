@@ -27,21 +27,16 @@ jobs:
         build_type: [Debug, Release]
         option_shared: [shared=True, shared=False]
         option_qt5: [qt5=True, qt5=False]
-        compiler_libcxx: [libstdc++, libstdc++11]
         os: [ubuntu-18.04, ubuntu-20.04]
         exclude:
           - os: ubuntu-20.04
             compiler_version: 6
-          - os: ubuntu-20.04
-            compiler_libcxx: libstdc++
           - os: ubuntu-18.04
             compiler_version: 7
           - os: ubuntu-18.04
             compiler_version: 8
           - os: ubuntu-18.04
             compiler_version: 9
-          - os: ubuntu-18.04
-            compiler_libcxx: libstdc++11
     steps:
       - uses: actions/checkout@v2
       - name: Install prerequisites
@@ -62,13 +57,13 @@ jobs:
         run: |
           conan create -s build_type=${{ matrix.build_type }} \
             -s compiler.version=${{ matrix.compiler_version }} \
-            -s compiler.libcxx=${{ matrix.compiler_libcxx }} \
+            -s compiler.libcxx=libstdc++11 \
             -o ${SINTEF_LIBNAME}:${{ matrix.option_shared }} \
             -o ${SINTEF_LIBNAME}:${{ matrix.option_qt5 }} \
             -b missing . sintef/stable
       - name: Conan upload
         run: |
-          conan upload --all -c -r sintef ${SINTEF_REFERENCE} --retry 5 --force
+          conan upload --all -c -r sintef ${SINTEF_REFERENCE} --retry 5 --retry-wait 20 --force
       - name: Bintray info
         run: |
           python3 bintray.py ${SINTEF_CONAN_CLASS} \
