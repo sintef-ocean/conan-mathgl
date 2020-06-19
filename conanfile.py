@@ -12,7 +12,7 @@ class MathglConan(ConanFile):
     licenses = ["LGPL-3.0", "GPL-3.0"]
     # LGPL-3.0-only | GPL-3.0-only
     url = "https://github.com/sintef-ocean/conan-mathgl"
-    author = "Joakim Haugen (joakim.haugen@gmail.com)"
+    author = "SINTEF Ocean"
     homepage = "http://mathgl.sourceforge.net"
     description = \
         "MathGL is a library for making high-quality scientific graphics "\
