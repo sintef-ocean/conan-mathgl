@@ -112,7 +112,8 @@ class MathglConan(ConanFile):
         if self.options.png:
             self.requires("libpng/[>=1.6.34]@bincrafters/stable")
         if self.options.jpeg:
-            self.requires("libjpeg-turbo/[>=1.5.2 <2.0]@bincrafters/stable", private=True)
+            self.requires("libjpeg-turbo/[>=1.5.2 <2.0]@bincrafters/stable",
+                          private=True)
             # set jpeg version 62
         if self.options.gif:
             self.requires("giflib/[>=5.1.4]@bincrafters/stable")
@@ -132,14 +133,15 @@ class MathglConan(ConanFile):
         if self.settings.compiler == "Visual Studio":
             if self.options.pthr_widget or self.options.pthread:
                 raise ConanInvalidConfiguration(
-                    "pthr_widget and pthread are not compatible with Visual Studio")
+                    "pthr_widget, pthread are incompatible with Visual Studio")
 
     def source(self):
 
         link = "https://sourceforge.net/projects/mathgl/files/mathgl/mathgl%20{0}/mathgl-{0}.tar.gz".format(self.version)
-        tools.get(link, sha1="c7faa770a78a8b6783a4eab6959703172f28b329") # sha1 is for 2.4.4
+        tools.get(link, sha1="c7faa770a78a8b6783a4eab6959703172f28b329")  # sha1 is for 2.4.4
 
-        tools.patch(patch_file="patch/CMakeLists.patch", base_path=self.source_subfolder)
+        tools.patch(patch_file="patch/CMakeLists.patch",
+                    base_path=self.source_subfolder)
 
     def _configure_cmake(self):
         cmake = CMake(self)
