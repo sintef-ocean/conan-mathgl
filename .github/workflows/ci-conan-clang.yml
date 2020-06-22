@@ -28,6 +28,11 @@ jobs:
         option_shared: [shared=True, shared=False]
         option_qt5: [qt5=True, qt5=False]
         os: [ubuntu-18.04]
+        exclude:
+          - option_qt5: qt5=True
+            compiler_version: 8
+          - option_qt5: qt5=True
+            compiler_version: 9
     steps:
       - uses: actions/checkout@v2
       - name: Install prerequisites
