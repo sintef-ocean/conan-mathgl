@@ -6,7 +6,7 @@ from conans.errors import ConanInvalidConfiguration
 
 
 class MathglConan(ConanFile):
-    name = "mathgl"
+    name = "mathgl2"
     version = "2.4.4"
     license = "LGPL-3.0 | GPL-3.0"
     licenses = ["LGPL-3.0", "GPL-3.0"]
