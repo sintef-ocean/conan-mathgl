@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler_version: [6, 7, 8, 9]
+        compiler_version: [63, 7, 8, 9]
         build_type: [Debug, Release]
         option_shared: [shared=True, shared=False]
         option_qt5: [qt5=True, qt5=False]
@@ -46,7 +46,6 @@ jobs:
       - name: Conan create
         run: |
           conan create -s build_type=${{ matrix.build_type }} \
-            -s compiler.version=${{ matrix.compiler_version }} \
             -s compiler.libcxx=libstdc++11 \
             -o ${SINTEF_LIBNAME}:${{ matrix.option_shared }} \
             -o ${SINTEF_LIBNAME}:${{ matrix.option_qt5 }} \
