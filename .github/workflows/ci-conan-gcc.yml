@@ -17,9 +17,6 @@ jobs:
   conan-with-gcc:
     name: Conan
     runs-on: ${{ matrix.os }}
-    env:
-      CC: gcc-${{ matrix.compiler_version }}
-      CXX: g++-${{ matrix.compiler_version }}
     strategy:
       fail-fast: false
       matrix:
@@ -27,39 +24,21 @@ jobs:
         build_type: [Debug, Release]
         option_shared: [shared=True, shared=False]
         option_qt5: [qt5=True, qt5=False]
-        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-20.04]
         exclude:
-          - os: ubuntu-16.04
-            compiler_version: 7
-          - os: ubuntu-16.04
-            compiler_version: 8
-          - os: ubuntu-16.04
-            compiler_version: 9
-          - os: ubuntu-18.04
-            compiler_version: 6
-          - os: ubuntu-18.04
-            compiler_version: 9
-          - os: ubuntu-20.04
-            compiler_version: 6
-          - os: ubuntu-20.04
-            compiler_version: 7
-          - os: ubuntu-20.04
-            compiler_version: 8
-          - os: ubuntu-16.04
+          - compiler_version: 6
             option_qt5: qt5=True
             # qt 5.15 did not compile with gcc 6
+    container:
+      image: conanio/gcc${{ matrix.compiler_version }}
+      options: -u 0
     steps:
       - uses: actions/checkout@v2
       - name: Install prerequisites
         run: |
-          sudo pip3 install --upgrade setuptools pip jinja2
+          sudo apt-get update
+          sudo pip3 install --upgrade setuptools pip
           sudo pip3 install conan requests
-          sudo pip3 install conan_package_tools
-          if [ ${{ matrix.compiler_version }} -eq 6 ]; then
-              sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-              sudo apt-get update
-              sudo apt-get install gcc-6 g++-6 -y
-          fi
       - name: Configure Conan
         run: |
           conan remote add sintef ${CONAN_UPLOAD} --insert 0
