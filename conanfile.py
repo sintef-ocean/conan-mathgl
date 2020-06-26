@@ -108,7 +108,7 @@ class MathglConan(ConanFile):
             self.requires("opengl/virtual@bincrafters/stable")
 
         if self.options.zlib:
-            self.requires("zlib/[>=1.2.11]@conan/stable")
+            self.requires("zlib/[>=1.2.11]")
         if self.options.png:
             self.requires("libpng/[>=1.6.34]@bincrafters/stable")
         if self.options.jpeg:
