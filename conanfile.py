@@ -110,7 +110,7 @@ class MathglConan(ConanFile):
         if self.options.zlib:
             self.requires("zlib/[>=1.2.11]")
         if self.options.png:
-            self.requires("libpng/[>=1.6.34]@bincrafters/stable")
+            self.requires("libpng/[>=1.6.34]")
         if self.options.jpeg:
             self.requires("libjpeg-turbo/[>=1.5.2 <2.0]@bincrafters/stable",
                           private=True)
