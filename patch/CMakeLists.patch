@@ -6,7 +6,7 @@
 -project( MathGL2 )
 +project( MathGL2 C CXX )
 +include(${CMAKE_BINARY_DIR}/../conan_paths.cmake)
-+find_package(zlib REQUIRED)
++find_package(ZLIB REQUIRED)
 +find_package(libjpeg-turbo REQUIRED)
 +find_package(Libharu REQUIRED)
 +find_package(libpng REQUIRED)
