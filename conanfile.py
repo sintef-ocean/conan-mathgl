@@ -187,5 +187,6 @@ class MathglConan(ConanFile):
         if not self.options.shared:
             for lib in range(len(self.cpp_info.libs)):
                 self.cpp_info.libs[lib] += "-static"
+            self.cpp_info.defines = ["MGL_STATIC_DEFINE"]
 
         #    self.cpp_info.libs.append("mgl")
