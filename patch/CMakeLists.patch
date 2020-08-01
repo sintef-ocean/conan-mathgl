@@ -1,5 +1,5 @@
---- CMakeLists.txt	2019-10-29 10:52:18.507507100 +0100
-+++ New_CMakeLists.txt	2019-10-29 10:51:59.303243000 +0100
+--- CMakeLists.txt	2019-07-08 20:56:57.000000000 +0200
++++ CMakeLists.txt	2020-08-01 10:55:31.435561859 +0200
 @@ -1,6 +1,19 @@
  cmake_minimum_required(VERSION 3.1.0)
  
@@ -12,7 +12,7 @@
 +find_package(PNG REQUIRED)
 +
 +set(CMAKE_CXX_STANDARD 11)
-+set(CMAKE_POSITION_INDEPENDENT_CODE:BOOL ON)
++set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 +if (APPLE)
 +    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
 +else()
@@ -30,6 +30,16 @@
  set(MathGL_VERSION_MAJOR 2)
  set(MathGL_VERSION_MINOR 4)
  set(MathGL_PATCH_VERSION 4)
+@@ -78,8 +91,8 @@
+        set_target_properties(${mgllib} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+        set_target_properties(${mgllib} PROPERTIES VISIBILITY_INLINES_HIDDEN 1)
+        target_compile_definitions(${mgllib}-static PUBLIC MGL_STATIC_DEFINE)
++       set(mgl_lib_static "-static")
+        if(MSVC)
+-	   set(mgl_lib_static "-static")
+            if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+                set(mgl_lib_end "d")
+ 	   else(CMAKE_BUILD_TYPE STREQUAL "Debug")
 @@ -535,16 +548,9 @@
  	if(NOT MGL_HAVE_PNG)
  		message(SEND_ERROR "You have to enable PNG if you plan to use PDF export.")
