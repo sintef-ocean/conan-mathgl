@@ -179,6 +179,12 @@ class MathglConan(ConanFile):
                 for file in files:
                     if redll.match(file):
                         os.remove(os.path.join(root,file))
+        if self.settings.os == "Windows":
+            tools.rmdir(os.path.join(self.package_folder,'cmake'))
+            if os.path.exists(os.path.join(self.package_folder, 'mathgl2-config.cmake')):
+                os.remove(os.path.join(self.package_folder, 'mathgl2-config.cmake'))
+        else:
+            tools.rmdir(os.path.join(self.package_folder,'lib','cmake'))
         self.copy('COPYING', dst="licenses", src=self.source_subfolder,
                   ignore_case=True, keep_path=False)
         if self.options.lgpl:
