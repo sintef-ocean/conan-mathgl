@@ -3,7 +3,8 @@
 
 from conans import ConanFile, CMake, tools, RunEnvironment
 from conans.errors import ConanInvalidConfiguration
-
+import os
+import re
 
 class MathglConan(ConanFile):
     name = "mathgl"
@@ -23,6 +24,7 @@ class MathglConan(ConanFile):
     source_subfolder = "mathgl-{}".format(version)
     build_subfolder = "build_subfolder"
     exports_sources = "patch/*"
+    keep_imports = True
     options = {"shared": [True, False],
                "lgpl": [True, False],
                "double_precision": [True, False],
@@ -135,6 +137,9 @@ class MathglConan(ConanFile):
                 raise ConanInvalidConfiguration(
                     "pthr_widget, pthread are incompatible with Visual Studio")
 
+    def imports(self):
+        self.copy("*", dst="licenses", src="licenses", folder=True)
+
     def source(self):
         link = "https://sourceforge.net/projects/mathgl/files/mathgl/mathgl%20{0}/mathgl-{0}.tar.gz".format(self.version)
         tools.get(link, sha1="c7faa770a78a8b6783a4eab6959703172f28b329")  # sha1 is for 2.4.4
@@ -162,14 +167,25 @@ class MathglConan(ConanFile):
             cmake = self._configure_cmake()
             cmake.install()
         self.copy("*.pdb", dst="lib")
-
+        restatic = re.compile('(.*[.]a$)|(.*-static[.]lib)')
+        redll = re.compile('.*[.]dll$')
+        for root, dirs, files in os.walk(os.path.join(self.package_folder, 'lib')):
+            for file in files:
+                if (self.options.shared and restatic.match(file)) or \
+                   (not self.options.shared and not restatic.match(file)):
+                    os.remove(os.path.join(root,file))
+        if not self.options.shared and self.settings.os == "Windows":
+            for root, dirs, files in os.walk(os.path.join(self.package_folder, 'bin')):
+                for file in files:
+                    if redll.match(file):
+                        os.remove(os.path.join(root,file))
         self.copy('COPYING', dst="licenses", src=self.source_subfolder,
                   ignore_case=True, keep_path=False)
         if self.options.lgpl:
             self.copy('COPYING_LGPL', dst="licenses", src=self.source_subfolder,
                       ignore_case=True, keep_path=False)
         if self.options.shared:
-            pass  # The dynamic version is needed for the bin/mglconv
+            self.copy("*", dst="licenses", src="licenses", keep_path=True)
 
     def package_info(self):
         self.cpp_info.name = 'MathGL'
@@ -184,8 +200,8 @@ class MathglConan(ConanFile):
 
         #if not self.options.shared and self.settings.compiler == "Visual Studio":
         if not self.options.shared:
-            for lib in range(len(self.cpp_info.libs)):
-                self.cpp_info.libs[lib] += "-static"
+            if self.settings.compiler == "Visual Studio":
+                for lib in range(len(self.cpp_info.libs)):
+                    self.cpp_info.libs[lib] += "-static"
             self.cpp_info.defines = ["MGL_STATIC_DEFINE","_CRT_STDIO_ISO_WIDE_SPECIFIERS"]
 
-        #    self.cpp_info.libs.append("mgl")
