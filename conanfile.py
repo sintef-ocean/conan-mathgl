@@ -163,12 +163,11 @@ class MathglConan(ConanFile):
             cmake.install()
         self.copy("*.pdb", dst="lib")
 
-        if self.options.lgpl:
-            theLicense = 'COPYING_LGPL'
-        else:
-            theLicense = 'COPYING'
-        self.copy(theLicense, dst="licenses", src=self.source_subfolder,
+        self.copy('COPYING', dst="licenses", src=self.source_subfolder,
                   ignore_case=True, keep_path=False)
+        if self.options.lgpl:
+            self.copy('COPYING_LGPL', dst="licenses", src=self.source_subfolder,
+                      ignore_case=True, keep_path=False)
         if self.options.shared:
             pass  # The dynamic version is needed for the bin/mglconv
 
