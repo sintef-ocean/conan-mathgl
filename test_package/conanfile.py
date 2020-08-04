@@ -12,6 +12,7 @@ class MathglTestConan(ConanFile):
     def build(self):
         cmake = CMake(self)
         cmake.definitions["WITH_QT"] = self.options["mathgl"].qt5
+        cmake.definitions["WITH_OPENGL"] = self.options["mathgl"].opengl and not self.options["mathgl"].shared and self.settings.os == "Windows"
         cmake.configure()
         cmake.build()
 
