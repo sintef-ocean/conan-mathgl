@@ -49,7 +49,7 @@ jobs:
             -s compiler.libcxx=libstdc++11 \
             -o ${SINTEF_LIBNAME}:${{ matrix.option_shared }} \
             -o ${SINTEF_LIBNAME}:${{ matrix.option_qt5 }} \
-            -b missing -b outdated . sintef/steady
+            -b missing -b outdated . sintef/stable
       - name: Conan upload
         run: |
           conan upload --all -c -r sintef ${SINTEF_REFERENCE} --retry 5 --retry-wait 20 --force
