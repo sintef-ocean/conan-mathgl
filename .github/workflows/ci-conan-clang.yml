@@ -20,14 +20,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler_version: [8, 9, 10]
+        compiler_version: [9, 10]
         build_type: [Debug, Release]
         option_shared: [shared=True, shared=False]
         option_qt5: [qt5=False]
         os: [ubuntu-20.04]
         exclude:
-          - option_qt5: qt5=True
-            compiler_version: 8
           - option_qt5: qt5=True
             compiler_version: 9
     container:
