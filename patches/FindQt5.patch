@@ -1,0 +1,14 @@
+--- widgets/qt5/CMakeListsOld.txt	2019-07-08 20:56:57.000000000 +0200
++++ widgets/qt5/CMakeLists.txt	2023-07-05 12:01:08.654449571 +0200
+@@ -1,8 +1,10 @@
+ include(GenerateExportHeader)
+ 
+ if(enable-qt5)
+-	include(../../scripts/qt5.cmake)
++	#include(../../scripts/qt5.cmake)
+ 	set(MGL_QT5_FILES ../qt.cpp ../../include/mgl2/qt.h ../../include/mgl2/qmathgl.h)
++        find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL)
++        set(MGL_QT5_LIBS Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::PrintSupport)
+ 	mgl_add_lib(qt5 ${MGL_QT5_FILES})
+ 	target_link_libraries(mgl-qt5 mgl ${MGL_QT5_LIBS})
+ 	target_link_libraries(mgl-qt5-static mgl-static ${MGL_QT5_LIBS})

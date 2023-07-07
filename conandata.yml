@@ -1,0 +1,9 @@
+sources:
+  "2.4.4":
+    url: "https://sourceforge.net/projects/mathgl/files/mathgl/mathgl%202.4.4/mathgl-2.4.4.tar.gz"
+    sha1: "c7faa770a78a8b6783a4eab6959703172f28b329"
+
+patches:
+  "2.4.4":
+    - patch_file: "patches/CMakeLists.patch"
+    - patch_file: "patches/FindQt5.patch"

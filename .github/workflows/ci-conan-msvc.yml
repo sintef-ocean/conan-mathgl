@@ -1,55 +1,64 @@
-name: MSVC Conan
+---
+name: Windows MSVC
 
-# This workflow is triggered on pushes to the repository.
-on: [push]
+on: [push, workflow_dispatch]
 
 env:
-  SINTEF_REFERENCE: "mathgl*"
-  SINTEF_LIBNAME: "mathgl"
   CONAN_UPLOAD: ${{ secrets.CONAN_URL }}
   CONAN_PASSWORD_SINTEF: ${{ secrets.CONAN_PASSWORD }}
   CONAN_LOGIN_USERNAME_SINTEF: ${{ secrets.CONAN_USER }}
-  CONAN_NON_INTERACTIVE: True
-  CONAN_USE_ALWAYS_SHORT_PATHS: True
+  CONFIG_URL: https://github.com/sintef-ocean/conan-configs.git
 
 jobs:
   conan-with-msvc:
     name: Conan
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-2022
     env:
-      CONAN_USER_HOME_SHORT: C:\c
-      CONAN_USE_ALWAYS_SHORT_PATHS: 1
+      PKG_REFERENCE: >-
+        ${{ matrix.conan == '1.0' &&
+        format('{0}@{1}/{2}', matrix.version, 'sintef', matrix.channel) ||
+        format('--version {0} --user {1} --channel {2}', matrix.version, 'sintef', matrix.channel) }}
+      UPLOAD_FLAGS: "${{ matrix.conan == '1.0' && '--all' || '' }}"
+      cppstd: "${{ matrix.compiler_version < 11 && 'gnu14' || 'gnu17' }}"
     strategy:
       fail-fast: false
       matrix:
-        compiler_toolset: [v141, v142, v143]
+        conan: ["1.0", "2.0"]
+        version: [2.4.4]
+        shared: ["True", "False"]
         build_type: [Debug, Release]
-        option_shared: [shared=True, shared=False]
-        option_qt5: [qt5=False]
-        compiler_version: [17]
-        os: [windows-2022]
+        profile: [msvc17]
+        compiler_version: [191, 192, 193]
+        channel: ["${{ (github.head_ref || github.ref_name) == 'master' && 'stable' || 'testing' }}"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install prerequisites
         run: |
           pip3 install --upgrade setuptools pip
-          pip3 install conan requests
-          vcpkg install opengl:x64-windows
+          pip3 install --upgrade conan~=${{ matrix.conan }}
       - name: Configure Conan
+        run: conan remote add sintef ${{ env.CONAN_UPLOAD }}
+      - name: Get package name Conan 1
+        if: matrix.conan == '1.0'
+        shell: pwsh
         run: |
-          conan remote add sintef ${env:CONAN_UPLOAD} --insert 0
-          conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan --insert 0
-          conan config set general.revisions_enabled=1
+          $package_name=conan inspect --raw name .
+          echo "package_name=$package_name" >> $Env:GITHUB_ENV
+      - name: Get package name Conan 2
+        if: matrix.conan == '2.0'
+        shell: pwsh
+        run: |
+          $package_name=conan inspect -f json . | jq .name -r
+          echo "package_name=$package_name" >> $Env:GITHUB_ENV
       - name: Conan create
         run: |
+          conan config install ${{ env.CONFIG_URL }} --type git -sf conan${{ matrix.conan }}
+          conan config install ${{ env.CONFIG_URL }}  --type git -sf profiles -tf profiles
           conan create -s build_type=${{ matrix.build_type }} `
             -s compiler.version=${{ matrix.compiler_version }} `
-            -s compiler.toolset=${{ matrix.compiler_toolset }} `
-            -s compiler="Visual Studio" `
-            -s compiler.cppstd=14 `
-            -o ${env:SINTEF_LIBNAME}:${{ matrix.option_shared }} `
-            -o ${env:SINTEF_LIBNAME}:${{ matrix.option_qt5 }} `
-            -b missing -b outdated . sintef/steady
+            -pr:b=${{ matrix.profile }} -pr:h=${{ matrix.profile }} `
+            -o ${{ env.package_name }}/*:shared=${{ matrix.shared }} `
+            -b missing -b outdated -b ${{ env.package_name }}* `
+            . ${{ env.PKG_REFERENCE }}
       - name: Conan upload
-        run: |
-          conan upload --all -c -r sintef ${env:SINTEF_REFERENCE} --retry 10 --retry-wait 20 --force
+        run: conan upload --confirm -r sintef ${{ env.package_name }}* --force ${{ env.UPLOAD_FLAGS }}
