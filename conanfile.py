@@ -100,7 +100,7 @@ class MathglConan(ConanFile):
         if self.options.zlib:
             self.requires("zlib/[~1.2.13]")
         if self.options.png:
-            self.requires("libpng/1.6.39")
+            self.requires("libpng/1.6.40")
         if self.options.jpeg:
             self.requires("libjpeg/9e")
         if self.options.gif:
