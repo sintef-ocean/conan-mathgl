@@ -42,9 +42,9 @@ jobs:
       - name: Install prerequisites
         run: |
           apt-get update
-          apt-get install -y jq python3 python3-pip
-          pip3 install --upgrade setuptools pip
-          pip3 install --upgrade conan~=${{ matrix.conan }}
+          apt-get install -y jq pipx build-essential cmake git
+          pipx install conan
+          echo "/github/home/.local/bin" >> $GITHUB_PATH
       - name: Configure Conan
         run: conan remote add sintef ${{ env.CONAN_UPLOAD }}
       - name: Get package name Conan 1
