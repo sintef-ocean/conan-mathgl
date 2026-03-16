@@ -42,7 +42,7 @@ jobs:
       - name: Install prerequisites
         run: |
           apt-get update
-          apt-get install -y jq
+          apt-get install -y jq python3 pip3
           pip3 install --upgrade setuptools pip
           pip3 install --upgrade conan~=${{ matrix.conan }}
       - name: Configure Conan
