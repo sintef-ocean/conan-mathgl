@@ -42,7 +42,7 @@ jobs:
       - name: Install prerequisites
         run: |
           apt-get update
-          apt-get install -y jq pipx build-essential cmake git
+          apt-get install -y jq pipx build-essential cmake git pkg-config
           pipx install conan
           echo "/github/home/.local/bin" >> $GITHUB_PATH
       - name: Configure Conan
