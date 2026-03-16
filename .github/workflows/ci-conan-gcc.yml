@@ -28,8 +28,15 @@ jobs:
         shared: ["True", "False"]
         build_type: [Debug, Release]
         profile: [gcc]
-        compiler_version: [12, 14]
+        compiler_version: [14]
         channel: ["${{ (github.head_ref || github.ref_name) == 'master' && 'stable' || 'testing' }}"]
+        include:
+          -
+            linux: debian:trixie
+            compiler_version: 14
+    container:
+      image: ${{ matrix.linux }}
+      options: -u 0
     steps:
       - uses: actions/checkout@v3
       - name: Install prerequisites
