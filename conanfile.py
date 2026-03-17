@@ -98,7 +98,7 @@ class MathglConan(ConanFile):
             self.requires("opengl/system")
 
         if self.options.zlib:
-            self.requires("zlib/[~1.2.13]")
+            self.requires("zlib/[1.3.1]")
         if self.options.png:
             self.requires("libpng/1.6.40")
         if self.options.jpeg:
